@@ -116,6 +116,8 @@
     <Compile Include="Model\ColumnModel.cs" />
     <Compile Include="Model\ColumnOrder.cs" />
     <Compile Include="Model\GridArgs.cs" />
+    <Compile Include="Model\Localization\LocalizationGrid.cs" />
+    <Compile Include="Model\Localization\LocalizationPaginator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

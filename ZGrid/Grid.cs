@@ -10,6 +10,7 @@ using Microsoft.SqlServer.Server;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ZGrid.Model;
+using ZGrid.Model.Localization;
 
 namespace ZGrid
 {
@@ -20,6 +21,8 @@ namespace ZGrid
         private readonly HtmlHelper _helper;
         private string _id = Guid.NewGuid().ToString();
         private readonly string _btnNewId = Guid.NewGuid().ToString();
+        private string _language;
+        private bool _useIcons;
         // ReSharper disable once StaticMemberInGenericType
         private static Regex ModelRegex { get; } = new Regex(@"(?<model>\{[^}]+\})", RegexOptions.Compiled);
 
@@ -31,6 +34,13 @@ namespace ZGrid
         public Grid<T> Id(string id)
         {
             _id = id;
+            return this;
+        }
+
+        public Grid<T> Language(string language,bool useIcons=false)
+        {
+            _language = language;
+            _useIcons = useIcons;
             return this;
         } 
         public MvcHtmlString RenderMarkup()
@@ -236,20 +246,7 @@ namespace ZGrid
                         return JSON.stringify(d);
                     }")
                 },
-                language=new
-                {
-                    lengthMenu= "Her sayfa için _MENU_ kayıt göster",//Display _MENU_ records per page
-                    zeroRecords= "Kayıt bulunamadı",//Nothing found - sorry
-                    info = "_PAGES_ sayfadan _PAGE_. sayfa görüntüleniyor",//Showing page _PAGE_ of _PAGES_
-                    infoEmpty = "Herhangi bir kayıt mevcut değil",//No records available
-                    infoFiltered = "(Sonuçlar _MAX_ tane kayıttan filtrelendi)",//""(filtered from _MAX_ total records)""
-                    paginate =new
-                    {
-                        previous= "Önceki sayfa",
-                        next= "Sonraki sayfası"
-                    },
-                    search= "Arama"
-                },
+                language=LocalizationGrid.Factory(_language,_useIcons),
                 pagingType= "full_numbers",//full
                 filter= false,
                 //lengthChange=false,
@@ -346,7 +343,7 @@ namespace ZGrid
                     //oTable.fnUpdate(aData[i], nRow, i, false);
                 //}}
 
-                oTable.fnDraw(false);
+                oTable.fnDraw(true);
             }}
 ";
             builder.AppendLine(fnRestore);
@@ -404,7 +401,9 @@ namespace ZGrid
             sbSaveRow.AppendLine(
                 $@"
             function saveRow(oTable, nRow) {{
-                var jqInputs = $('input,select', nRow);");
+                var jqInputs = $('>td', nRow);
+                var tempData=[];
+            ");
 
             for (int i = 0, act = 0; i < _columnsManager.Columns.Count; ++i)
             {
@@ -416,7 +415,23 @@ namespace ZGrid
 
                 if (!column.IsReadOnly)
                 {
-                    sbSaveRow.AppendLine($"oTable.fnUpdate(jqInputs[{act}].value, nRow, {i}, false);");
+                    sbSaveRow.AppendLine($@"tempData[{act}]=jqInputs.eq({act}).children()[0].value;");
+                }
+                act++;
+            }
+
+            for (int i = 0, act = 0; i < _columnsManager.Columns.Count; ++i)
+            {
+                var column = _columnsManager.Columns[i];
+                if (column.Hidden)
+                {
+                    continue;
+                }
+
+                if (!column.IsReadOnly)
+                {
+                    sbSaveRow.AppendLine($"oTable.fnUpdate(tempData[{act}], nRow, {i}, false);");
+                    //sbSaveRow.AppendLine($"oTable.fnDataUpdate(tempData[{act}], {i});");
                 }
                 act++;
             }
@@ -427,7 +442,7 @@ namespace ZGrid
                 $.post(nNew ? ""{_dataSourceManager.AjaxSource
                     .CreateUrl}"" : ""{_dataSourceManager.AjaxSource.UpdateUrl}"", aData,
                     function(result) {{
-                        oTable.fnDraw(false);
+                        oTable.fnDraw(true);
                     }});");
             builder.AppendLine(sbSaveRow.ToString());
             builder.AppendLine(@"}");
