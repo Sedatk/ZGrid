@@ -219,16 +219,16 @@ namespace ZGrid
             display:none;
         }
 </style>";
-            var styleInjected = false;
-                //_helper.ViewContext.ContainsKey("_style_injected") 
-                //&& (bool) _helper.ViewContext.TempData["_style_injected"];
+            //var styleInjected = false;
+            //    //_helper.ViewContext.ContainsKey("_style_injected") 
+            //    //&& (bool) _helper.ViewContext.TempData["_style_injected"];
 
-            if (!styleInjected)
-            {
-                _helper.ViewContext.TempData["_style_injected"] = true;
-                builder.AppendLine(styles);
-            }
-            
+            //if (!styleInjected)
+            //{
+            //    _helper.ViewContext.TempData["_style_injected"] = true;
+            builder.AppendLine(styles);
+            //}
+
             builder.AppendLine(@"<script type=""text/javascript"">");
             builder.AppendLine($@"(function() {{");
             builder.AppendLine("var nEditing = null");
@@ -295,13 +295,8 @@ namespace ZGrid
                     var nRow = $(this).parents('tr')[0];
                     editRow(oTable, nRow);
 
-                    if (nNew)
-                    {{
-                        oTable.fnDeleteRow(nRow);
-                    }}
-                    else {{
-                        restoreRow(oTable, nRow);
-                    }}
+                    restoreRow(oTable, nRow);
+                    
                     nEditing = null;
                     nNew = false;
                 }}
