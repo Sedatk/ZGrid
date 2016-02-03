@@ -349,7 +349,7 @@ namespace ZGrid
             }}
 ";
             builder.AppendLine(fnRestore);
-            StringBuilder sbEditRow = new StringBuilder();
+            var sbEditRow = new StringBuilder();
             sbEditRow.AppendLine(
                 $@"
              function editRow(oTable, nRow) {{
