@@ -13,13 +13,5 @@ namespace ZGrid
         {
             return new Grid<T>(html);
         }
-
-        public static MvcHtmlString Test(this HtmlHelper helper)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine(helper.Raw("<p>DENEME DENEME</p>").ToHtmlString());
-
-            return new MvcHtmlString(sb.ToString());
-        }
     }
 }
