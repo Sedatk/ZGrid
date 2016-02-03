@@ -329,6 +329,13 @@ namespace ZGrid
 ";
             builder.AppendLine(saveEventHandler);
 
+            string drawEvent = $@"
+            $(""#{_id}"").on('draw.dt', function () {{
+                nEditing = null;
+                nNew = false;
+            }});
+";
+            builder.AppendLine(drawEvent);
             string fnRestore = $@"
             function restoreRow(oTable, nRow) {{
                 //var aData = oTable.fnGetData(nRow);

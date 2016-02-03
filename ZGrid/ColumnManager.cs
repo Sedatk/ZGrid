@@ -7,7 +7,7 @@ namespace ZGrid
 {
     public class ColumnManager<T>
     {
-        private Column _column;
+        private readonly Column _column;
         public ColumnManager(Column column)
         {
             this._column = column;
