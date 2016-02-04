@@ -13,6 +13,7 @@ namespace ZGrid.DataSource
         public string ReadUrl { get; private set; }
         public string CreateUrl { get; private set; }
         public string UpdateUrl { get; private set; }
+        public string DeleteUrl { get; private set; }
         public int PageLength { get; private set; } = 3;
         public AjaxSource(UrlHelper urlHelper)
         {
@@ -36,6 +37,11 @@ namespace ZGrid.DataSource
         public AjaxSource Update(Func<UrlHelper, string> url)
         {
             UpdateUrl = url(_urlHelper);
+            return this;
+        }
+        public AjaxSource Delete(Func<UrlHelper, string> url)
+        {
+            DeleteUrl = url(_urlHelper);
             return this;
         }
     }

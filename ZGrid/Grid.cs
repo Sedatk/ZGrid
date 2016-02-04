@@ -123,9 +123,8 @@ namespace ZGrid
 
             return "'"+string.Join(@"\" + Environment.NewLine, strs)+"'";
         }
-        private string ReshapeTemplate(string template)
+        private static string ReshapeTemplate(string template)
         {
-            var coll = ModelRegex.Matches(template);
             var splits = ModelRegex.Split(template);
 
             var templateBuilder = new StringBuilder();
@@ -148,6 +147,7 @@ namespace ZGrid
                     templateBuilder.Append(ConvertToJScriptString(part));
                 }
             }
+
             return templateBuilder.ToString();
         }
         private IList<ColumnModel> GetColumns()
@@ -171,7 +171,6 @@ namespace ZGrid
             }
 
             column = _columnsManager.Columns[_columnsManager.Columns.Count - 1];
-            var lastColumnType = column.Type == null ? string.Empty : $@"""type"":""{column.Type}"",";
 
             columns.Add(new ColumnModel()
             {
@@ -182,8 +181,8 @@ namespace ZGrid
                 Render = new JRaw($@"function(model,type,row){{
                     var vMenu='<div class=""visible-menu"">\
                         <div class=""btn-group btn-group-xs btn-group-solid"">\
-                            <button type = ""button"" class=""btn btn-success tbEdit"">Edit<i class=""fa fa-edit""></i></button>\
-                            <button type = ""button"" class=""btn btn-danger"">Delete<i class=""fa fa-trash""></i></button>\
+                            {(string.IsNullOrEmpty(_dataSourceManager.AjaxSource.UpdateUrl)? string.Empty: @"<button type = ""button"" class=""btn btn-success tbEdit"">Edit<i class=""fa fa-edit""></i></button>")}\
+                            {(string.IsNullOrEmpty(_dataSourceManager.AjaxSource.DeleteUrl)? string.Empty: @"<button type = ""button"" class=""btn btn-danger"">Delete<i class=""fa fa-trash""></i></button>")}\
                         </div>\
                     </div>';    
                     return vMenu+{(column.ViewTemplate!=null?ReshapeTemplate(column.ViewTemplate):"model")};
@@ -490,8 +489,8 @@ namespace ZGrid
             }});
 ";
             builder.AppendLine(fnNewRow);
-            builder.AppendLine($@"}})();");
-            builder.AppendLine(@" </script>");
+            builder.AppendLine(@"})();");
+            builder.AppendLine(@"</script>");
             
             return new MvcHtmlString(builder.ToString());
         }
