@@ -258,7 +258,7 @@ namespace ZGrid
             builder.AppendLine(scriptTable);
 
             string editButtonEventHandler = $@"
-            $(""#{_id}"").on({{
+            table.on({{
                 mouseenter: function() {{
                     if (nEditing === null)
                     {{
@@ -276,19 +276,34 @@ namespace ZGrid
             builder.AppendLine(editButtonEventHandler);
             
             string editEventHandler=$@"
-            $(""#{_id}"").on({{
+            
+            table.on({{
                 click: function(e) {{e.preventDefault();
                     var nRow = $(this).parents('tr')[0];
                     nEditing = nRow;
                     nNew = false;
-                    editRow(oTable, nRow); 
+                    editRow(oTable, nRow);
+                    $(table).find('select')
+                        .each(function(index,value)
+                        {{ 
+                            var cur=$(value);
+                            cur.val(cur.attr(""value""));
+                        }}); 
+
+                    $(table).find('input[data-provide=datepicker]')
+                        .each(function(index,value)
+                        {{
+                            var cur=$(value);
+                            var queryDate = new Date(cur.attr(""value""));
+                            cur.datepicker('setDate', queryDate);
+                        }});
                 }}
             }}, "".tbEdit"");
 ";
             builder.AppendLine(editEventHandler);
 
             string cancelEventHandler = $@"
-            $(""#{_id}"").on({{
+            table.on({{
                 click: function(e) {{
                     e.preventDefault();
                     var nRow = $(this).parents('tr')[0];
@@ -304,7 +319,7 @@ namespace ZGrid
             builder.AppendLine(cancelEventHandler);
 
             string saveEventHandler = $@"
-            $(""#{_id}"").on({{
+            table.on({{
                 click: function(e) {{
                     e.preventDefault();
                     
@@ -329,7 +344,7 @@ namespace ZGrid
             builder.AppendLine(saveEventHandler);
 
             string drawEvent = $@"
-            $(""#{_id}"").on('draw.dt', function () {{
+            table.on('draw.dt', function () {{
                 nEditing = null;
                 nNew = false;
             }});
@@ -344,7 +359,7 @@ namespace ZGrid
                     //oTable.fnUpdate(aData[i], nRow, i, false);
                 //}}
 
-                oTable.fnDraw(true);
+                oTable.fnDraw(false);
             }}
 ";
             builder.AppendLine(fnRestore);
@@ -443,7 +458,7 @@ namespace ZGrid
                 $.post(nNew ? ""{_dataSourceManager.AjaxSource
                     .CreateUrl}"" : ""{_dataSourceManager.AjaxSource.UpdateUrl}"", aData,
                     function(result) {{
-                        oTable.fnDraw(true);
+                        oTable.fnDraw(false);
                     }});");
             builder.AppendLine(sbSaveRow.ToString());
             builder.AppendLine(@"}");
@@ -481,7 +496,7 @@ namespace ZGrid
 
                
                 var nRow = oTable.fnGetNodes(aiNew[0]);
-                $(""#{_id} tbody"").prepend(nRow);
+                $(table).find('tbody').prepend(nRow);
 
                 editRow(oTable, nRow);
                 nEditing = nRow;
@@ -505,6 +520,15 @@ namespace ZGrid
         {
             var urlHelper = new UrlHelper(_helper.ViewContext.RequestContext);
             dataSource(_dataSourceManager= new DatasourceManager(urlHelper));
+
+            if (!string.IsNullOrEmpty(_dataSourceManager.AjaxSource.UpdateUrl)
+                || !string.IsNullOrEmpty(_dataSourceManager.AjaxSource.CreateUrl))
+            {
+                foreach (var col in _columnsManager.ColumnManagers)
+                {
+                    col.CreateDefaultEditTemplate();
+                }
+            }
             return this;
         }
     }

@@ -29,8 +29,9 @@ namespace ZGrid
         }
 
         public IList<Column> Columns { get; } = new List<Column>();
-
-        public ColumnManager<TSource> For<TProperty>(Expression<Func<TSource, TProperty>> func)
+        internal IList<ColumnManager> ColumnManagers { get; }=new List<ColumnManager>();
+        
+        public ColumnManager<TProperty> For<TProperty>(Expression<Func<TSource, TProperty>> func)
         {
             var propInfo = GetPropertyInfo<TProperty>(func);
 
@@ -46,7 +47,9 @@ namespace ZGrid
             if (displayAttribute != null) column.Title = displayAttribute.Name;
             Columns.Add(column);
 
-            return new ColumnManager<TSource>(column);
+            var columnManager= new ColumnManager<TProperty>(column);
+            ColumnManagers.Add(columnManager);
+            return columnManager;
         }
     }
 }

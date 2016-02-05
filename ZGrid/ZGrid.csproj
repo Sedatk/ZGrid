@@ -111,6 +111,7 @@
     <Compile Include="DatasourceManager.cs" />
     <Compile Include="DataSource\AjaxSource.cs" />
     <Compile Include="DataSource\DataSource.cs" />
+    <Compile Include="EditTemplateManager.cs" />
     <Compile Include="Grid.cs" />
     <Compile Include="HtmlExtensions.cs" />
     <Compile Include="Model\ColumnModel.cs" />
