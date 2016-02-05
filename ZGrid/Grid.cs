@@ -23,6 +23,7 @@ namespace ZGrid
         private readonly string _btnNewId = Guid.NewGuid().ToString();
         private string _language;
         private bool _useIcons;
+        private bool _useMetronic;
         // ReSharper disable once StaticMemberInGenericType
         private static Regex ModelRegex { get; } = new Regex(@"(?<model>\{[^}]+\})", RegexOptions.Compiled);
 
@@ -42,7 +43,13 @@ namespace ZGrid
             _language = language;
             _useIcons = useIcons;
             return this;
-        } 
+        }
+
+        public Grid<T> UseMetronic()
+        {
+            _useMetronic = true;
+            return this;
+        }
         public MvcHtmlString RenderMarkup()
         {
             var builder = new StringBuilder();
@@ -241,9 +248,10 @@ namespace ZGrid
                 {
                     url= _dataSourceManager.AjaxSource.ReadUrl,
                     type="POST",
-                    data=new JRaw(@"function(d) {
+                    data=new JRaw($@"function(d) {{
+                        {(_useMetronic? $@"Metronic.blockUI({{target: '#{_id}', boxed: true}});":"")}
                         return JSON.stringify(d);
-                    }")
+                    }}")
                 },
                 language=LocalizationGrid.Factory(_language,_useIcons),
                 pagingType= "full_numbers",//full
@@ -347,6 +355,7 @@ namespace ZGrid
             table.on('draw.dt', function () {{
                 nEditing = null;
                 nNew = false;
+                {(_useMetronic? $"Metronic.unblockUI('#{_id}');" : "")}
             }});
 ";
             builder.AppendLine(drawEvent);
@@ -359,7 +368,7 @@ namespace ZGrid
                     //oTable.fnUpdate(aData[i], nRow, i, false);
                 //}}
 
-                oTable.fnDraw(false);
+                oTable.fnDraw({(_useMetronic?"true":"false")});
             }}
 ";
             builder.AppendLine(fnRestore);
@@ -458,7 +467,7 @@ namespace ZGrid
                 $.post(nNew ? ""{_dataSourceManager.AjaxSource
                     .CreateUrl}"" : ""{_dataSourceManager.AjaxSource.UpdateUrl}"", aData,
                     function(result) {{
-                        oTable.fnDraw(false);
+                        oTable.fnDraw({(_useMetronic ? "true" : "false")});
                     }});");
             builder.AppendLine(sbSaveRow.ToString());
             builder.AppendLine(@"}");
