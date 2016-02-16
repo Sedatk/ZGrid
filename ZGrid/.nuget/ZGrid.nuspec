@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>ZGrid</id>
+    <version>1.0.0.138</version>
+    <authors>Sedat Kurtoglu</authors>
+    <owners>Sedat Kurtoglu</owners>
+    <!--<licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>-->
+    <projectUrl>https://github.com/Sedatk/ZGrid</projectUrl>
+    <!--<iconUrl>https://avatars.githubusercontent.com/SedatK</iconUrl>-->
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>ZGrid is an asp.net mvc grid helper extension using jQuery datatables</description>
+    <releaseNotes>Initial Version</releaseNotes>
+    <copyright>Copyright 2016 Sedat Kurtoglu</copyright>
+    <tags>Grid Mvc</tags>
+  </metadata>
+  <files>
+	  <file src="..\ZGrid\bin\tr-TR\ZGrid.resources.dll" target="lib\net45\tr-TR" />
+  </files>
+</package>

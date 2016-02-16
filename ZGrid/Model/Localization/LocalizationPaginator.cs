@@ -24,27 +24,15 @@ namespace ZGrid.Model.Localization
         [JsonProperty(PropertyName = "last")]
         public string Last { get; private set; }
         
-        public static LocalizationPaginator Factory(string language,bool useIcons=false)
+        public static LocalizationPaginator Factory(bool useIcons=false)
         {
-            switch (language)
+            return new LocalizationPaginator()
             {
-                case "tr-TR":
-                    return new LocalizationPaginator()
-                    {
-                        Previous = useIcons ? "<" : "Önceki sayfa",
-                        Next = useIcons ? ">" : "Sonraki sayfa",
-                        First = useIcons?"<<":"İlk",
-                        Last = useIcons ? ">>" : "Son"
-                    };
-                default:
-                    return new LocalizationPaginator()
-                    {
-                        Previous = useIcons ? "<" : "Previous",
-                        Next = useIcons ? ">" : "Next",
-                        First = useIcons ? "<<" : "First",
-                        Last = useIcons ? ">>" : "Last"
-                    };
-            }
+                Previous = useIcons ? "<" : Resources.Strings.Previous,
+                Next = useIcons ? ">" : Resources.Strings.Next,
+                First = useIcons ? "<<" : Resources.Strings.First,
+                Last = useIcons ? ">>" : Resources.Strings.Last
+            };
         } 
     }
 }

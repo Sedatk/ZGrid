@@ -21,7 +21,7 @@ namespace ZGrid
         private readonly HtmlHelper _helper;
         private string _id = Guid.NewGuid().ToString();
         private readonly string _btnNewId = Guid.NewGuid().ToString();
-        private string _language;
+       
         private bool _useIcons;
         private bool _useMetronic;
         // ReSharper disable once StaticMemberInGenericType
@@ -37,14 +37,7 @@ namespace ZGrid
             _id = id;
             return this;
         }
-
-        public Grid<T> Language(string language,bool useIcons=false)
-        {
-            _language = language;
-            _useIcons = useIcons;
-            return this;
-        }
-
+        
         public Grid<T> UseMetronic()
         {
             _useMetronic = true;
@@ -60,7 +53,7 @@ namespace ZGrid
         <div class=""col-md-6"">
             <div class=""btn-group"">
                 <button id = ""{_btnNewId}"" class=""btn green"">
-                    Add New<i class=""fa fa-plus""></i>
+                    {Resources.Strings.AddNew}<i class=""fa fa-plus""></i>
                 </button>
             </div>
         </div>
@@ -72,17 +65,17 @@ namespace ZGrid
                 <ul class=""dropdown-menu pull-right"">
                     <li>
                         <a href = ""javascript:;"" >
-                            Print
+                            {Resources.Strings.Print}
                         </a>
                     </li>
                     <li>
                         <a href=""javascript:;"">
-                            Save as PDF
+                            {Resources.Strings.SaveAsPDF}
                         </a>
                     </li>
                     <li>
                         <a href = ""javascript:;"" >
-                            Export to Excel
+                            {Resources.Strings.ExporttoExcel}
                         </a>
                     </li>
                 </ul>
@@ -253,7 +246,7 @@ namespace ZGrid
                         return JSON.stringify(d);
                     }}")
                 },
-                language=LocalizationGrid.Factory(_language,_useIcons),
+                language=LocalizationGrid.Factory(_useIcons),
                 pagingType= "full_numbers",//full
                 filter= false,
                 //lengthChange=false,
